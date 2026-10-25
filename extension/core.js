@@ -34,6 +34,20 @@
     } catch { return null; }
   }
   function identity(value) { const u = mediaURL(value); return u ? u.hostname + u.pathname : ""; }
+  function videoURL(value) {
+    const u = mediaURL(value);
+    return u && /\/(?:\d+)-\d+-(?:100\d+|30[01]\d+)\.m4s$/.test(u.pathname) ? u : null;
+  }
+  function deadline(value) {
+    const n = Number(mediaURL(value)?.searchParams.get("deadline"));
+    return Number.isSafeInteger(n) && n > 0 ? n : null;
+  }
+  function freshURL(observed, metadata) {
+    // Never substitute a different host or representation. A newer signature
+    // for the exact resource can replace one retained in Resource Timing.
+    return identity(observed) && identity(observed) === identity(metadata)
+      && (deadline(metadata) || 0) > (deadline(observed) || 0) ? metadata : observed;
+  }
   function range(value) {
     const m = /^(\d+)-(\d+)$/.exec(String(value));
     if (!m) throw Error("Invalid byte range");
@@ -93,7 +107,7 @@
     const to = time + lead + config.windowSeconds;
     return {from, to, segments: rows.filter(s => s.start >= from && s.end <= to)};
   }
-  const api = {defaults, limits, settings, mediaURL, identity, range, sidx, representations, plan};
+  const api = {defaults, limits, settings, mediaURL, videoURL, identity, deadline, freshURL, range, sidx, representations, plan};
   globalThis.Primer = api;
   if (typeof module !== "undefined") module.exports = api;
 })();

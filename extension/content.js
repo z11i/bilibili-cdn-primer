@@ -9,6 +9,7 @@
     representations: 0, networkObservations: 0, performanceObservations: 0};
   const seenResources = new Set();
   let newestNetworkObservation = -Infinity;
+  const INDEX_PROBE_BYTES = 65536;
   const history = new Map(); // Host+path+range; signed URL refresh does not reset attempts.
   const message = value => browser.runtime.sendMessage(value);
   function log(value) { events.push({at: new Date().toISOString(), ...value}); if (events.length > 40) events.shift(); }
@@ -21,22 +22,29 @@
   function adopt(list, source = "playurl API") {
     if (!Array.isArray(list) || !list.length) return;
     const merged = new Map(reps.map(v => [P.identity(v.url), v]));
-    for (const v of list) if (P.mediaURL(v.url)) merged.set(P.identity(v.url), v);
+    for (const v of list) if (P.mediaURL(v.url)) {
+      const key = P.identity(v.url), previous = merged.get(key);
+      // An unchanged initial page global must not overwrite a newer API URL.
+      if (previous && P.freshURL(v.url, previous.url) === previous.url && previous.url !== v.url) continue;
+      if (previous?.source === "playurl API" && source === "window.__playinfo__"
+          && (P.deadline(previous.url) || 0) >= (P.deadline(v.url) || 0)) continue;
+      merged.set(key, {...v, source});
+    }
     reps = [...merged.values()].slice(-1000);
     detection.metadataSource = source; detection.representations = reps.length;
     choose();
   }
   function choose() {
-    // Only a real player video request chooses the representation and CDN.
+    // A current video request chooses the representation/CDN. Playinfo improves
+    // labels and index offsets, but is not required to discover the actual SIDX.
     for (const observed of recent) {
       const rep = reps.find(v => P.identity(v.url) === P.identity(observed));
-      if (!rep) {
-        if (/-1-(?:100\d+|30[01]\d+)\.m4s$/.test(new URL(observed).pathname)) return;
-        continue;
-      }
-      const fresh = {...rep, url: observed};
-      if (selected && P.identity(selected.url) === P.identity(fresh.url) && selected.index === fresh.index) {
-        selected.url = observed; return;
+      if (!rep && !P.videoURL(observed)) continue;
+      const fresh = rep ? {...rep, url: P.freshURL(observed, rep.url)}
+        : {url: observed, index: null, quality: null, codec: null, source: "media index probe"};
+      if (selected && P.identity(selected.url) === P.identity(fresh.url)) {
+        if (selected.url !== fresh.url || selected.index !== fresh.index) blocked = "";
+        selected = fresh; return;
       }
       reset("Media stream changed", true); selected = fresh; return;
     }
@@ -109,7 +117,7 @@
       pending, bytes: totalBytes, attempted, partial, completed, events,
       detection: {...detection, recentMedia: recent.slice(0, 6).map(u => {
         const parsed = new URL(u); return {host: parsed.hostname, path: parsed.pathname};
-      })}};
+      }), selectedSource: selected?.source || null, indexSource: selected?.index ? "playinfo" : "media index probe"}};
   }
   async function request(kind, range, segment) {
     token = `${Date.now()}-${Math.random()}`;
@@ -146,15 +154,22 @@
     pending = true;
     try {
       if (!segments.length) {
-        const r = P.range(selected.index);
+        const indexRange = selected.index || `0-${INDEX_PROBE_BYTES - 1}`;
+        const r = P.range(indexRange);
         notice = "Reading segment index";
-        const result = await request("index", selected.index);
+        const result = await request("index", indexRange);
+        totalBytes += result.bytes || 0;
         if (generation !== epoch) return;
         if (result.busy || result.budget) { notice = result.busy ? "Other tab is priming" : "Shared bandwidth budget reached"; return; }
+        if (result.errorCode === "expired") { blocked = result.error; notice = blocked; log({error: blocked}); return; }
         if ([401, 403].includes(result.status)) blocked = "Access refused — refresh video for fresh playback URLs";
         if (!result.complete || !result.data) throw Error(result.error || "Index fetch incomplete; refresh or retry");
         if (!result.headersApplied) throw Error("Firefox did not attach the expected media headers; request path needs checking");
-        segments = P.sidx(Uint8Array.from(result.data).buffer, r.lo);
+        try { segments = P.sidx(Uint8Array.from(result.data).buffer, r.lo); }
+        catch (e) {
+          if (!selected.index) blocked = "Video index unavailable — refresh video";
+          throw e;
+        }
       }
       const plan = P.plan(segments, video.currentTime, bufferEnd(), video.playbackRate, config);
       const candidate = plan.segments.find(s => {
@@ -165,10 +180,11 @@
       const key = `${P.identity(selected.url)}:${candidate.lo}-${candidate.hi}`;
       notice = `Priming ${Math.floor(candidate.start / 60)}:${String(Math.floor(candidate.start % 60)).padStart(2, "0")}`;
       const result = await request("prime", `${candidate.lo}-${candidate.hi}`, candidate.id);
-      if (result.busy || result.budget) { notice = result.busy ? "Other tab is priming" : "Shared bandwidth budget reached"; return; }
-      if (result.error && !result.outcome) throw Error(result.error);
       totalBytes += result.bytes || 0;
       if (generation !== epoch) { log({outcome: "cancelled after player change", bytes: result.bytes}); return; }
+      if (result.busy || result.budget) { notice = result.busy ? "Other tab is priming" : "Shared bandwidth budget reached"; return; }
+      if (result.errorCode === "expired") { blocked = result.error; notice = blocked; log({error: blocked}); return; }
+      if (result.error && !result.outcome) throw Error(result.error);
       attempted++;
       if (result.outcome === "partial") partial++;
       if (result.complete) completed++;
@@ -187,7 +203,9 @@
   }
   browser.runtime.onMessage.addListener(msg => {
     if (msg.type === "configure") { config = P.settings(msg.config); blocked = ""; reset("Settings changed"); }
-    if (msg.type === "playinfo" && (!msg.page || msg.page === location.href)) adopt(msg.reps);
+    // API responses can finish across an SPA URL change. Matching the actual
+    // observed media identity prevents stale responses from selecting old work.
+    if (msg.type === "playinfo") adopt(msg.reps);
     if (msg.type === "observed") observed(msg.url, "network");
   });
   document.addEventListener("visibilitychange", () => { if (document.hidden && !config.primeHidden) reset("Tab hidden"); });

@@ -2,7 +2,7 @@
 
 ## English
 
-Version: **0.2.0**
+Version: **0.2.1**
 
 This source archive contains the original, readable extension files, original icon artwork, tests, documentation, and a reproducible packaging script. No minification, transpilation, bundling, or remote code loading is used.
 
@@ -16,15 +16,15 @@ From this directory, run:
 python3 scripts/package.py
 ```
 
-Output: `dist/bilibili-cdn-primer-0.2.0.zip`.
+Output: `dist/bilibili-cdn-primer-0.2.1.zip`.
 
 Expected SHA-256:
 
 ```
-c2678b842463f271aa57f09a87b75fbcc226757f9d863ea49f0e266fc406e84d
+c8c6f4ea7be1b4f11c9a378e9a6bb5fbe5ed773a7c356f2fc3fe70e2198623a6
 ```
 
-This is byte-for-byte identical to the submitted runtime ZIP named `bilibili-primer-0.2.0.zip`. Archive filenames differ; the archive bytes and all packaged files are identical. Packaging uses fixed file order, timestamps, permissions, and ZIP compression. The checksum was verified with Python 3.9.6 and zlib 1.2.12 on macOS; a different zlib implementation can change ZIP compression bytes without changing extension source contents.
+This is byte-for-byte identical to the submitted runtime ZIP named `bilibili-primer-0.2.1.zip`. Archive filenames differ; the archive bytes and all packaged files are identical. Packaging uses fixed file order, timestamps, permissions, and ZIP compression. The checksum was verified with Python 3.9.6 and zlib 1.2.12 on macOS; a different zlib implementation can change ZIP compression bytes without changing extension source contents.
 
 ### Optional validation
 
@@ -42,7 +42,7 @@ Support: https://github.com/z11i/bilibili-cdn-primer/issues
 
 ## 简体中文
 
-版本：**0.2.0**。
+版本：**0.2.1**。
 
 本源代码包包含可直接审阅的扩展源文件、原创图标、测试、文档和可复现的打包脚本。没有代码压缩、转译、合并或远程代码加载。
 
@@ -56,15 +56,15 @@ Support: https://github.com/z11i/bilibili-cdn-primer/issues
 python3 scripts/package.py
 ```
 
-输出：`dist/bilibili-cdn-primer-0.2.0.zip`。
+输出：`dist/bilibili-cdn-primer-0.2.1.zip`。
 
 预期 SHA-256：
 
 ```
-c2678b842463f271aa57f09a87b75fbcc226757f9d863ea49f0e266fc406e84d
+c8c6f4ea7be1b4f11c9a378e9a6bb5fbe5ed773a7c356f2fc3fe70e2198623a6
 ```
 
-此文件与提交的 `bilibili-primer-0.2.0.zip` 逐字节一致，文件名不同，但软件包字节和其中的文件相同。打包脚本固定文件顺序、时间戳、权限和 ZIP 压缩方式。不同 zlib 实现可能改变压缩字节，但不改变扩展源文件内容。
+此文件与提交的 `bilibili-primer-0.2.1.zip` 逐字节一致，文件名不同，但软件包字节和其中的文件相同。打包脚本固定文件顺序、时间戳、权限和 ZIP 压缩方式。不同 zlib 实现可能改变压缩字节，但不改变扩展源文件内容。
 
 ### 可选验证
 

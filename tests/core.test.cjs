@@ -40,3 +40,25 @@ test('input restrictions reject arbitrary URLs, unsafe integers and invalid sett
   assert.throws(() => P.range('9-2'));
   assert.throws(() => P.settings({primeSeconds: -1}));
 });
+test('only recognized video IDs qualify for header probing; audio never does', () => {
+ const base='https://upos-sz-mirrorcosov.bilivideo.com/upgcxcode/1/2/3/3-1-';
+ assert.ok(P.videoURL(base+'100029.m4s'));
+ assert.ok(P.videoURL(base+'30080.m4s'));
+ assert.equal(P.videoURL(base+'30280.m4s'),null);
+ assert.equal(P.videoURL(base+'30232.m4s'),null);
+});
+test('fresh metadata signatures replace old observed signatures only for the exact same resource', () => {
+ const base='https://upos-sz-mirrorcosov.bilivideo.com/upgcxcode/1/2/3/3-1-100029.m4s';
+ assert.equal(P.freshURL(base+'?deadline=1',base+'?deadline=9'),base+'?deadline=9');
+ assert.equal(P.freshURL(base+'?deadline=9',base+'?deadline=1'),base+'?deadline=9');
+ assert.equal(P.freshURL(base+'?deadline=1',base.replace('mirrorcosov','other')+'?deadline=9'),base+'?deadline=1');
+ assert.equal(P.deadline(base+'?deadline=invalid'),null);
+});
+test('header probes find SIDX after initialization boxes and ignore following media bytes',()=>{
+ const index=require('./fixtures.cjs').sidx({count:3});
+ const header=Buffer.alloc(40);header.writeUInt32BE(16,0);header.write('ftyp',4);header.writeUInt32BE(24,16);header.write('moov',20);
+ const probe=Buffer.concat([header,index,Buffer.alloc(65536-header.length-index.length)]);
+ const rows=P.sidx(probe.buffer.slice(probe.byteOffset,probe.byteOffset+probe.length),0);
+ assert.equal(rows[0].lo,40+index.length);
+ assert.equal(rows[2].end,15);
+});

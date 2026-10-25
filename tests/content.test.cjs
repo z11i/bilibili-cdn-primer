@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const fs = require('node:fs');
 const P = require('../extension/core.js');
-test('seek aborts old generation; stale initial playinfo cannot restore old part', async () => {
+test('seek cancels old work; current media can be indexed independently of stale playinfo', async () => {
   const url = 'https://upos-sz-mirrorcosov.bilivideo.com/upgcxcode/98/10/123456789/123456789-1-100029.m4s?sig=fixture';
   const bin = require('./fixtures.cjs').sidx({count: 500});
   let timer, listener, now = 10000, finishPrime;
@@ -41,6 +41,11 @@ test('seek aborts old generation; stale initial playinfo cannot restore old part
   finishPrime({bytes: 10, outcome: 'partial', status: 206, headersApplied: true}); await flush();
   now += 2000; timer(); await flush();
   const latest = sent.filter(v => v.type === 'summary').at(-1).value;
-  assert.equal(latest.host, null);
-  assert.equal(sent.filter(v => v.type === 'fetch' && v.kind === 'prime').length, 2);
+  assert.ok(latest.media.includes('99999999999'));
+  assert.equal(latest.detection.selectedSource, 'media index probe');
+  assert.equal(latest.quality, null);
+  assert.equal(sent.filter(v => v.type === 'fetch' && v.kind === 'prime').length, 3);
+  const lastIndex = sent.filter(v => v.type === 'fetch' && v.kind === 'index').at(-1);
+  assert.equal(lastIndex.range, '0-65535');
+  assert.ok(lastIndex.url.includes('99999999999'));
 });

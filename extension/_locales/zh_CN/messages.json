@@ -244,5 +244,20 @@
   },
   "errorGeneric": {
     "message": "操作未完成，请查看诊断"
+  },
+  "streamObserved": {
+    "message": "已识别视频请求"
+  },
+  "indexSource": {
+    "message": "索引来源"
+  },
+  "indexMedia": {
+    "message": "当前视频文件"
+  },
+  "indexPlayinfo": {
+    "message": "播放信息"
+  },
+  "statusUnavailableIndex": {
+    "message": "无法读取当前视频索引，请刷新页面"
   }
 }

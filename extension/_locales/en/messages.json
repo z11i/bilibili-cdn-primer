@@ -244,5 +244,20 @@
   },
   "errorGeneric": {
     "message": "Operation failed; see diagnostics"
+  },
+  "streamObserved": {
+    "message": "Observed video request"
+  },
+  "indexSource": {
+    "message": "Index source"
+  },
+  "indexMedia": {
+    "message": "Current media file"
+  },
+  "indexPlayinfo": {
+    "message": "Playback metadata"
+  },
+  "statusUnavailableIndex": {
+    "message": "Video index unavailable — refresh video"
   }
 }

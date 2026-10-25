@@ -27,7 +27,7 @@ To test interactively, load `extension/manifest.json` from Firefox’s `about:de
 | `i18n.js`, `_locales/` | Page-language selection and localized strings |
 | `popup.*` | Status, settings, and diagnostic export |
 
-The extension matches observed player requests to available DASH representations before priming. It reads the selected representation’s index and schedules exact ranges beyond the current buffer. Request cancellation covers connection, headers, and body transfer. A seek changes the schedule generation, so old asynchronous results cannot restart obsolete work.
+The extension uses observed player video requests to select the active resource. When matching playback metadata is available it supplies index offsets and codec/quality labels; otherwise a bounded 64 KiB media-header probe locates the SIDX directly. The fallback never probes recognized audio resources and stops if no supported index is found. It schedules exact ranges beyond the current buffer. Expired signed URLs are held until a newer signature is observed or supplied for that exact resource. Request cancellation covers connection, headers, and body transfer. A seek changes the schedule generation, so old asynchronous results cannot restart obsolete work.
 
 Lead is measured in wall-clock seconds and adjusted for playback rate. The window is measured in video seconds. The effective lead is at least the request deadline plus the configured settle and delivery allowances. These allowances are estimates; they do not prove that a cache fill has completed.
 

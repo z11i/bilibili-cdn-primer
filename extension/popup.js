@@ -30,13 +30,13 @@ async function update() {
   await translate(PrimerI18n.locale(snapshot.config.language, s?.pageLanguage));
   $("status").textContent = PrimerI18n.notice(s?.notice, t);
   $("status").dataset.active = Boolean(s?.pending);
-  const rows = s ? [[t("labelCDN"), s.host || t("notDetected")], [t("labelStream"), `${s.quality || "?"} · ${s.codec || "?"}`],
+  const rows = s ? [[t("labelCDN"), s.host || t("notDetected")], [t("labelStream"), s.codec ? `${s.quality || "?"} · ${s.codec}` : s.host ? t("streamObserved") : "? · ?"],
     [t("labelPlayback"), t("bufferValue", [clock(s.current), clock(s.bufferedEnd)])],
     [t("labelWindow"), s.window ? `${clock(s.window.from)}–${clock(s.window.to)}` : "—"],
     [t("labelAttempts"), t("attemptsValue", [s.attempted, s.partial, s.completed])],
     [t("labelTraffic"), `${(s.bytes / 1048576).toFixed(2)} MiB`]] : [];
   rowsInto("details", rows);
-  rowsInto("detectionDetails", s?.detection ? [[t("labelDetection"), t("detectionValue", [s.detection.representations, s.detection.networkObservations, s.detection.performanceObservations])]] : []);
+  rowsInto("detectionDetails", s?.detection ? [[t("labelDetection"), t("detectionValue", [s.detection.representations, s.detection.networkObservations, s.detection.performanceObservations])], [t("indexSource"), t(s.detection.indexSource === "playinfo" ? "indexPlayinfo" : "indexMedia")]] : []);
 }
 $("settings").addEventListener("submit", async e => {
   e.preventDefault(); const value = {...config};

@@ -8,7 +8,7 @@ Bilibili CDN Primer requests upcoming DASH video segments ahead of playback, the
 ## Features
 
 - Moving look-ahead window based on playback position and buffered data.
-- Exact segment byte ranges from the video’s SIDX index.
+- Exact segment byte ranges from the video’s SIDX index, including a bounded media-header fallback when page metadata is unavailable.
 - Configurable request duration, byte limits, intervals, and look-ahead timing.
 - One shared request slot and a rolling traffic budget across tabs.
 - Automatic cancellation on seeks and stream changes, with priority given to a player running low on buffer.

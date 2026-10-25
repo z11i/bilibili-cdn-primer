@@ -61,8 +61,8 @@ async function fetchRange(msg, sender) {
   let r; try { r = P.range(msg.range); } catch (e) { return {error: e.message}; }
   const index = msg.kind === "index";
   if (index && r.size > 2 * 1024 * 1024) return {error: "Index exceeds 2 MiB"};
-  const expiry = Number(url.searchParams.get("deadline"));
-  if (expiry && expiry * 1000 < Date.now() + 15000) return {error: "Signed URL expired or expiring; refresh the video"};
+  const expiry = P.deadline(url.href);
+  if (expiry && expiry * 1000 < Date.now() + 15000) return {error: "Signed URL expired or expiring; refresh the video", errorCode: "expired"};
   const cap = index ? r.size : Math.min(r.size, Math.floor(config.maxPrimeMiB * 1048576));
   while (usage.length && usage[0].at < Date.now() - 60000) usage.shift();
   // Reserve worst-case bytes before starting; allow one stream chunk of overhead.
