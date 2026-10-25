@@ -1,0 +1,1 @@
+:root { color-scheme: light dark; font: 15px/1.8 system-ui, sans-serif; } body { margin: 0; } main { max-width: 760px; padding: 40px 24px; margin: auto; } h1 { font-size: 26px; } h2 { font-size: 18px; margin-top: 26px; } section { padding-bottom: 30px; } section + section { border-top: 1px solid #8885; padding-top: 24px; } a { color: inherit; }

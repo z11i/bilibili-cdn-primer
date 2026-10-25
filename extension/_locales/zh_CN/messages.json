@@ -1,0 +1,248 @@
+{
+  "extensionName": {
+    "message": "哔哩哔哩 CDN 预热"
+  },
+  "extensionDescription": {
+    "message": "按播放进度预热后续视频片段，支持提前量、请求时长和流量限制。"
+  },
+  "appTitle": {
+    "message": "视频预热"
+  },
+  "appSubtitle": {
+    "message": "哔哩哔哩 CDN Primer"
+  },
+  "enabled": {
+    "message": "启用预热"
+  },
+  "waitingStatus": {
+    "message": "正在读取播放状态…"
+  },
+  "settings": {
+    "message": "预热设置"
+  },
+  "language": {
+    "message": "界面语言"
+  },
+  "autoLanguage": {
+    "message": "跟随视频页面（默认简体中文）"
+  },
+  "leadSeconds": {
+    "message": "提前量 · 实际秒"
+  },
+  "windowSeconds": {
+    "message": "预热范围 · 视频秒"
+  },
+  "primeSeconds": {
+    "message": "单次请求时长 · 秒"
+  },
+  "settleSeconds": {
+    "message": "CDN 等待余量 · 秒"
+  },
+  "fetchMarginSeconds": {
+    "message": "下载与安全余量 · 秒"
+  },
+  "cadenceSeconds": {
+    "message": "调度间隔 · 秒"
+  },
+  "gapSeconds": {
+    "message": "请求间隔 · 秒"
+  },
+  "maxPrimeMiB": {
+    "message": "单次流量上限 · MiB"
+  },
+  "budgetMiB": {
+    "message": "所有标签页每分钟上限 · MiB"
+  },
+  "minBufferSeconds": {
+    "message": "优先保障播放缓冲 · 秒"
+  },
+  "cdn": {
+    "message": "适用 CDN"
+  },
+  "cdnFollow": {
+    "message": "跟随播放器"
+  },
+  "cdnGcore": {
+    "message": "仅 Gcore / mirrorcosov"
+  },
+  "cdnAkamai": {
+    "message": "仅 Akamai / mirrorakam"
+  },
+  "primeWhilePaused": {
+    "message": "暂停播放时继续预热"
+  },
+  "primeHidden": {
+    "message": "在后台标签页中预热"
+  },
+  "save": {
+    "message": "保存设置"
+  },
+  "saved": {
+    "message": "已保存，调度已更新。"
+  },
+  "export": {
+    "message": "导出诊断"
+  },
+  "details": {
+    "message": "诊断详情"
+  },
+  "privacy": {
+    "message": "隐私说明"
+  },
+  "labelCDN": {
+    "message": "CDN"
+  },
+  "labelStream": {
+    "message": "视频流"
+  },
+  "labelPlayback": {
+    "message": "播放进度"
+  },
+  "labelWindow": {
+    "message": "预热范围"
+  },
+  "labelAttempts": {
+    "message": "请求统计"
+  },
+  "labelTraffic": {
+    "message": "预热流量"
+  },
+  "labelDetection": {
+    "message": "检测状态"
+  },
+  "notDetected": {
+    "message": "尚未检测到"
+  },
+  "bufferValue": {
+    "message": "$1 · 已缓冲至 $2"
+  },
+  "attemptsValue": {
+    "message": "$1 次 · $2 次部分读取 · $3 次完整读取"
+  },
+  "detectionValue": {
+    "message": "$1 个流 · $2 次网络 / $3 次资源记录"
+  },
+  "openVideo": {
+    "message": "请打开哔哩哔哩视频；首次安装后请刷新视频页面。"
+  },
+  "statusWaitingMedia": {
+    "message": "等待播放器的视频请求"
+  },
+  "statusChanged": {
+    "message": "视频流已切换"
+  },
+  "statusPlayer": {
+    "message": "已连接播放器"
+  },
+  "statusSeeking": {
+    "message": "正在跳转，重新计算预热范围"
+  },
+  "statusSeeked": {
+    "message": "已跳转"
+  },
+  "statusRate": {
+    "message": "播放速度已更改"
+  },
+  "statusPaused": {
+    "message": "已暂停"
+  },
+  "statusBuffering": {
+    "message": "优先保障播放器缓冲"
+  },
+  "statusEnded": {
+    "message": "播放已结束"
+  },
+  "statusNewStream": {
+    "message": "等待新视频流的播放信息"
+  },
+  "statusPage": {
+    "message": "页面或分集已切换"
+  },
+  "statusDisabled": {
+    "message": "预热已关闭"
+  },
+  "statusHidden": {
+    "message": "等待标签页回到前台"
+  },
+  "statusWaitingPaused": {
+    "message": "播放暂停，预热已暂停"
+  },
+  "statusLowBuffer": {
+    "message": "播放缓冲不足，暂缓预热"
+  },
+  "statusMetadataError": {
+    "message": "无法读取播放信息，请导出诊断"
+  },
+  "statusMetadata": {
+    "message": "等待播放信息"
+  },
+  "statusRequest": {
+    "message": "已读取播放信息，等待视频请求"
+  },
+  "statusMatch": {
+    "message": "已发现视频请求，等待匹配的播放信息"
+  },
+  "statusLegacyMatch": {
+    "message": "等待播放信息与视频请求匹配"
+  },
+  "statusCDN": {
+    "message": "播放器正在使用其他 CDN"
+  },
+  "statusIndex": {
+    "message": "正在读取视频分段索引"
+  },
+  "statusOtherTab": {
+    "message": "其他标签页正在预热"
+  },
+  "statusBudget": {
+    "message": "已达到共享流量上限，稍后继续"
+  },
+  "statusCovered": {
+    "message": "当前范围已处理，跟随播放进度继续预热"
+  },
+  "statusAccess": {
+    "message": "访问被拒绝，请刷新视频页面"
+  },
+  "statusHeaders": {
+    "message": "媒体请求头缺失，请查看诊断"
+  },
+  "statusSettings": {
+    "message": "设置已更新"
+  },
+  "statusClosed": {
+    "message": "页面已关闭"
+  },
+  "statusPriming": {
+    "message": "正在预热 $1"
+  },
+  "statusPartial": {
+    "message": "已部分读取 · $1 MiB"
+  },
+  "statusCompleted": {
+    "message": "已完整读取 · $1 MiB"
+  },
+  "statusNoBody": {
+    "message": "未收到媒体数据"
+  },
+  "statusFailed": {
+    "message": "请求失败，请查看诊断"
+  },
+  "errorExpired": {
+    "message": "视频地址已过期或即将过期，请刷新页面"
+  },
+  "errorIndex": {
+    "message": "分段索引读取未完成，稍后重试或刷新页面"
+  },
+  "errorNetwork": {
+    "message": "网络请求失败，请查看诊断"
+  },
+  "errorRange": {
+    "message": "媒体服务器未返回所需的数据范围（HTTP $1）"
+  },
+  "errorSetting": {
+    "message": "$1：请输入 $2 至 $3 之间的数值"
+  },
+  "errorGeneric": {
+    "message": "操作未完成，请查看诊断"
+  }
+}

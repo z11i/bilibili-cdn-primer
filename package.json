@@ -1,0 +1,19 @@
+{
+  "name": "bilibili-cdn-primer",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Configurable upcoming-segment priming for Bilibili on Firefox.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "lint": "web-ext lint --source-dir extension --warnings-as-errors",
+    "build": "python3 scripts/package.py",
+    "check": "npm test && npm run lint"
+  },
+  "devDependencies": {
+    "web-ext": "10.8.0"
+  }
+}

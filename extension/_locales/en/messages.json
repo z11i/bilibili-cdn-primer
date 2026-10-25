@@ -1,0 +1,248 @@
+{
+  "extensionName": {
+    "message": "Bilibili CDN Primer"
+  },
+  "extensionDescription": {
+    "message": "Prime upcoming Bilibili video segments with configurable timing and traffic limits."
+  },
+  "appTitle": {
+    "message": "Video Primer"
+  },
+  "appSubtitle": {
+    "message": "Bilibili CDN Primer"
+  },
+  "enabled": {
+    "message": "Enable priming"
+  },
+  "waitingStatus": {
+    "message": "Reading player status…"
+  },
+  "settings": {
+    "message": "Priming settings"
+  },
+  "language": {
+    "message": "Interface language"
+  },
+  "autoLanguage": {
+    "message": "Follow video page (default: Simplified Chinese)"
+  },
+  "leadSeconds": {
+    "message": "Lead · real seconds"
+  },
+  "windowSeconds": {
+    "message": "Window · video seconds"
+  },
+  "primeSeconds": {
+    "message": "Request duration · seconds"
+  },
+  "settleSeconds": {
+    "message": "CDN settle allowance · seconds"
+  },
+  "fetchMarginSeconds": {
+    "message": "Fetch and safety allowance · seconds"
+  },
+  "cadenceSeconds": {
+    "message": "Schedule interval · seconds"
+  },
+  "gapSeconds": {
+    "message": "Request gap · seconds"
+  },
+  "maxPrimeMiB": {
+    "message": "Per-request limit · MiB"
+  },
+  "budgetMiB": {
+    "message": "All tabs per minute · MiB"
+  },
+  "minBufferSeconds": {
+    "message": "Minimum playback buffer · seconds"
+  },
+  "cdn": {
+    "message": "CDN filter"
+  },
+  "cdnFollow": {
+    "message": "Follow player"
+  },
+  "cdnGcore": {
+    "message": "Gcore / mirrorcosov only"
+  },
+  "cdnAkamai": {
+    "message": "Akamai / mirrorakam only"
+  },
+  "primeWhilePaused": {
+    "message": "Prime while paused"
+  },
+  "primeHidden": {
+    "message": "Prime hidden tabs"
+  },
+  "save": {
+    "message": "Save settings"
+  },
+  "saved": {
+    "message": "Saved. Schedule updated."
+  },
+  "export": {
+    "message": "Export diagnostics"
+  },
+  "details": {
+    "message": "Diagnostics"
+  },
+  "privacy": {
+    "message": "Privacy"
+  },
+  "labelCDN": {
+    "message": "CDN"
+  },
+  "labelStream": {
+    "message": "Stream"
+  },
+  "labelPlayback": {
+    "message": "Playback"
+  },
+  "labelWindow": {
+    "message": "Prime window"
+  },
+  "labelAttempts": {
+    "message": "Requests"
+  },
+  "labelTraffic": {
+    "message": "Prime traffic"
+  },
+  "labelDetection": {
+    "message": "Detection"
+  },
+  "notDetected": {
+    "message": "Not detected"
+  },
+  "bufferValue": {
+    "message": "$1 · buffered to $2"
+  },
+  "attemptsValue": {
+    "message": "$1 total · $2 partial · $3 completed"
+  },
+  "detectionValue": {
+    "message": "$1 streams · $2 network / $3 timing observations"
+  },
+  "openVideo": {
+    "message": "Open a Bilibili video; reload the page after first installation."
+  },
+  "statusWaitingMedia": {
+    "message": "Waiting for player media requests"
+  },
+  "statusChanged": {
+    "message": "Media stream changed"
+  },
+  "statusPlayer": {
+    "message": "Player attached"
+  },
+  "statusSeeking": {
+    "message": "Seeking — rebuilding window"
+  },
+  "statusSeeked": {
+    "message": "Seek complete"
+  },
+  "statusRate": {
+    "message": "Playback speed changed"
+  },
+  "statusPaused": {
+    "message": "Paused"
+  },
+  "statusBuffering": {
+    "message": "Yielding bandwidth to buffering player"
+  },
+  "statusEnded": {
+    "message": "Video ended"
+  },
+  "statusNewStream": {
+    "message": "Waiting for new stream metadata"
+  },
+  "statusPage": {
+    "message": "Page/part changed"
+  },
+  "statusDisabled": {
+    "message": "Disabled"
+  },
+  "statusHidden": {
+    "message": "Waiting — tab hidden"
+  },
+  "statusWaitingPaused": {
+    "message": "Waiting — paused"
+  },
+  "statusLowBuffer": {
+    "message": "Yielding bandwidth — player needs buffer"
+  },
+  "statusMetadataError": {
+    "message": "Playback metadata could not be read — export diagnostics"
+  },
+  "statusMetadata": {
+    "message": "Waiting for playback metadata"
+  },
+  "statusRequest": {
+    "message": "Metadata found — waiting for a player video request"
+  },
+  "statusMatch": {
+    "message": "Player request found — waiting for matching stream metadata"
+  },
+  "statusLegacyMatch": {
+    "message": "Waiting for matching playinfo and a player video request"
+  },
+  "statusCDN": {
+    "message": "Waiting — player is using a different CDN"
+  },
+  "statusIndex": {
+    "message": "Reading segment index"
+  },
+  "statusOtherTab": {
+    "message": "Other tab is priming"
+  },
+  "statusBudget": {
+    "message": "Shared bandwidth budget reached"
+  },
+  "statusCovered": {
+    "message": "Upcoming window attempted; watching playback"
+  },
+  "statusAccess": {
+    "message": "Access refused — refresh video for fresh playback URLs"
+  },
+  "statusHeaders": {
+    "message": "Media headers missing — open diagnostics"
+  },
+  "statusSettings": {
+    "message": "Settings changed"
+  },
+  "statusClosed": {
+    "message": "Page closed"
+  },
+  "statusPriming": {
+    "message": "Priming $1"
+  },
+  "statusPartial": {
+    "message": "Partial · $1 MiB"
+  },
+  "statusCompleted": {
+    "message": "Completed · $1 MiB"
+  },
+  "statusNoBody": {
+    "message": "No media data received"
+  },
+  "statusFailed": {
+    "message": "Request failed; see diagnostics"
+  },
+  "errorExpired": {
+    "message": "Signed video URL expired or expiring; reload the page"
+  },
+  "errorIndex": {
+    "message": "Index fetch incomplete; retry or reload the page"
+  },
+  "errorNetwork": {
+    "message": "Network request failed; see diagnostics"
+  },
+  "errorRange": {
+    "message": "Media server did not return the requested range (HTTP $1)"
+  },
+  "errorSetting": {
+    "message": "$1: enter a value between $2 and $3"
+  },
+  "errorGeneric": {
+    "message": "Operation failed; see diagnostics"
+  }
+}
