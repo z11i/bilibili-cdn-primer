@@ -15,7 +15,7 @@
     "message": "Enable priming"
   },
   "waitingStatus": {
-    "message": "Reading player status…"
+    "message": "Reading player status\u2026"
   },
   "settings": {
     "message": "Priming settings"
@@ -27,34 +27,34 @@
     "message": "Follow video page (default: Simplified Chinese)"
   },
   "leadSeconds": {
-    "message": "Lead · real seconds"
+    "message": "Lead \u00b7 real seconds"
   },
   "windowSeconds": {
-    "message": "Window · video seconds"
+    "message": "Window \u00b7 video seconds"
   },
   "primeSeconds": {
-    "message": "Request duration · seconds"
+    "message": "Request duration \u00b7 seconds"
   },
   "settleSeconds": {
-    "message": "CDN settle allowance · seconds"
+    "message": "CDN settle allowance \u00b7 seconds"
   },
   "fetchMarginSeconds": {
-    "message": "Fetch and safety allowance · seconds"
+    "message": "Fetch and safety allowance \u00b7 seconds"
   },
   "cadenceSeconds": {
-    "message": "Schedule interval · seconds"
+    "message": "Schedule interval \u00b7 seconds"
   },
   "gapSeconds": {
-    "message": "Request gap · seconds"
+    "message": "Request gap \u00b7 seconds"
   },
   "maxPrimeMiB": {
-    "message": "Per-request limit · MiB"
+    "message": "Per-request limit \u00b7 MiB"
   },
   "budgetMiB": {
-    "message": "All tabs per minute · MiB"
+    "message": "All tabs per minute \u00b7 MiB"
   },
   "minBufferSeconds": {
-    "message": "Minimum playback buffer · seconds"
+    "message": "Minimum playback buffer \u00b7 seconds"
   },
   "cdn": {
     "message": "CDN filter"
@@ -114,13 +114,13 @@
     "message": "Not detected"
   },
   "bufferValue": {
-    "message": "$1 · buffered to $2"
+    "message": "$1 \u00b7 buffered to $2"
   },
   "attemptsValue": {
-    "message": "$1 total · $2 partial · $3 completed"
+    "message": "$1 total \u00b7 $2 partial \u00b7 $3 completed"
   },
   "detectionValue": {
-    "message": "$1 streams · $2 network / $3 timing observations"
+    "message": "$1 streams \u00b7 $2 network / $3 timing observations"
   },
   "openVideo": {
     "message": "Open a Bilibili video; reload the page after first installation."
@@ -135,7 +135,7 @@
     "message": "Player attached"
   },
   "statusSeeking": {
-    "message": "Seeking — rebuilding window"
+    "message": "Seeking \u2014 rebuilding window"
   },
   "statusSeeked": {
     "message": "Seek complete"
@@ -162,31 +162,31 @@
     "message": "Disabled"
   },
   "statusHidden": {
-    "message": "Waiting — tab hidden"
+    "message": "Waiting \u2014 tab hidden"
   },
   "statusWaitingPaused": {
-    "message": "Waiting — paused"
+    "message": "Waiting \u2014 paused"
   },
   "statusLowBuffer": {
-    "message": "Yielding bandwidth — player needs buffer"
+    "message": "Yielding bandwidth \u2014 player needs buffer"
   },
   "statusMetadataError": {
-    "message": "Playback metadata could not be read — export diagnostics"
+    "message": "Playback metadata could not be read \u2014 export diagnostics"
   },
   "statusMetadata": {
     "message": "Waiting for playback metadata"
   },
   "statusRequest": {
-    "message": "Metadata found — waiting for a player video request"
+    "message": "Metadata found \u2014 waiting for a player video request"
   },
   "statusMatch": {
-    "message": "Player request found — waiting for matching stream metadata"
+    "message": "Player request found \u2014 waiting for matching stream metadata"
   },
   "statusLegacyMatch": {
     "message": "Waiting for matching playinfo and a player video request"
   },
   "statusCDN": {
-    "message": "Waiting — player is using a different CDN"
+    "message": "Waiting \u2014 player is using a different CDN"
   },
   "statusIndex": {
     "message": "Reading segment index"
@@ -201,10 +201,10 @@
     "message": "Upcoming window attempted; watching playback"
   },
   "statusAccess": {
-    "message": "Access refused — refresh video for fresh playback URLs"
+    "message": "Access refused \u2014 refresh video for fresh playback URLs"
   },
   "statusHeaders": {
-    "message": "Media headers missing — open diagnostics"
+    "message": "Media headers missing \u2014 open diagnostics"
   },
   "statusSettings": {
     "message": "Settings changed"
@@ -216,10 +216,10 @@
     "message": "Priming $1"
   },
   "statusPartial": {
-    "message": "Partial · $1 MiB"
+    "message": "Partial \u00b7 $1 MiB"
   },
   "statusCompleted": {
-    "message": "Completed · $1 MiB"
+    "message": "Completed \u00b7 $1 MiB"
   },
   "statusNoBody": {
     "message": "No media data received"
@@ -258,6 +258,117 @@
     "message": "Playback metadata"
   },
   "statusUnavailableIndex": {
-    "message": "Video index unavailable — refresh video"
+    "message": "Video index unavailable \u2014 refresh video"
+  },
+  "mode": {
+    "message": "Mode"
+  },
+  "modeObserve": {
+    "message": "Observe only (no prime traffic)"
+  },
+  "modePrime": {
+    "message": "Limited priming"
+  },
+  "statusObserve": {
+    "message": "Observation only \u2014 recording playback without priming"
+  },
+  "statusPlayerBusy": {
+    "message": "Player downloading \u2014 waiting for idle time"
+  },
+  "labelStalls": {
+    "message": "Playback stalls"
+  },
+  "stallsValue": {
+    "message": "$1 stalls \u00b7 $2 s (startup/seeks recorded separately)"
+  },
+  "labelPlayerRequests": {
+    "message": "Player requests"
+  },
+  "playerRequestsValue": {
+    "message": "$1 completed \u00b7 $2 failed/aborted \u00b7 $3 overlapped priming"
+  },
+  "modeAdaptive": {
+    "message": "Adaptive priming"
+  },
+  "adaptiveMaxPrimeMiB": {
+    "message": "Adaptive byte ceiling \u00b7 MiB"
+  },
+  "adaptiveDeadlineSeconds": {
+    "message": "Adaptive overall timeout \u00b7 seconds"
+  },
+  "adaptiveMaxLeadSeconds": {
+    "message": "Adaptive maximum lead \u00b7 seconds"
+  },
+  "labelAdaptive": {
+    "message": "Adaptive target"
+  },
+  "adaptiveValue": {
+    "message": "$1 KiB \u00b7 timeout $2 s \u00b7 lead $3 s \u00b7 $4 samples"
+  },
+  "labelDecision": {
+    "message": "Decision"
+  },
+  "labelRecovery": {
+    "message": "Recovery"
+  },
+  "recoveryYes": {
+    "message": "Small idle-only probes"
+  },
+  "recoveryNo": {
+    "message": "Normal scheduling"
+  },
+  "statusRecovery": {
+    "message": "Recovery \u2014 waiting between small probes"
+  },
+  "adaptiveReason_initial": {
+    "message": "Initial estimate; waiting for comparable player requests"
+  },
+  "adaptiveReason_no-body-start-earlier": {
+    "message": "Repeated probes received no data; start earlier"
+  },
+  "adaptiveReason_slow-first-byte-start-earlier": {
+    "message": "Repeated first-byte delays; start earlier"
+  },
+  "adaptiveReason_slow-body-increase-bytes": {
+    "message": "Repeated slow player downloads; increase byte target"
+  },
+  "adaptiveReason_fast-repeats-reduce-bytes": {
+    "message": "Six fast follow-up requests; reduce extra traffic"
+  },
+  "adaptiveConcurrency": {
+    "message": "Allow bounded concurrent probes (experimental)"
+  },
+  "adaptiveBusyWaitSeconds": {
+    "message": "Blocked time before concurrent probe \u00b7 seconds"
+  },
+  "labelScheduler": {
+    "message": "Scheduler"
+  },
+  "labelBlocked": {
+    "message": "Player blockers"
+  },
+  "blockedValue": {
+    "message": "$1 requests \u00b7 waiting $2 s \u00b7 cooldown $3 s"
+  },
+  "schedule_idle": {
+    "message": "Player idle"
+  },
+  "schedule_concurrency-disabled": {
+    "message": "Waiting; concurrent probes disabled"
+  },
+  "schedule_waiting": {
+    "message": "Waiting before bounded concurrent probe"
+  },
+  "schedule_cooldown": {
+    "message": "Concurrent probe cooling down"
+  },
+  "schedule_concurrent-ready": {
+    "message": "Bounded concurrent probe eligible"
+  },
+  "schedule_index-too-large": {
+    "message": "Waiting; index too large for concurrent probe"
+  },
+  "schedule_player-range-overlap": {
+    "message": "Player already downloading this range"
   }
 }

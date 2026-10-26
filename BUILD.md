@@ -1,81 +1,32 @@
-# Source package / 源代码包
+# Local diagnostic build / 本地诊断构建
 
-## English
+Version / 版本：0.4.2
 
-Version: **0.2.1**
+This build is for local playback measurement. No signing or publication step is included.
+此构建用于本地播放测量，不包含签名或发布步骤。
 
-This source archive contains the original, readable extension files, original icon artwork, tests, documentation, and a reproducible packaging script. No minification, transpilation, bundling, or remote code loading is used.
-
-### Reproduce the submitted extension
-
-Requirements: **Python 3**. No npm installation is required to reproduce the extension archive.
-
-From this directory, run:
+Requires Python 3 / 需要 Python 3：
 
 ```sh
 python3 scripts/package.py
 ```
 
-Output: `dist/bilibili-cdn-primer-0.2.1.zip`.
+Output / 输出：`dist/bilibili-cdn-primer-0.4.2.zip`
 
-Expected SHA-256:
+SHA-256：
 
 ```
-c8c6f4ea7be1b4f11c9a378e9a6bb5fbe5ed773a7c356f2fc3fe70e2198623a6
+ae0200b3f9e12269597b3776c225f5b68d0176c8537a5d7579edbe23aaaf4a8e
 ```
 
-This is byte-for-byte identical to the submitted runtime ZIP named `bilibili-primer-0.2.1.zip`. Archive filenames differ; the archive bytes and all packaged files are identical. Packaging uses fixed file order, timestamps, permissions, and ZIP compression. The checksum was verified with Python 3.9.6 and zlib 1.2.12 on macOS; a different zlib implementation can change ZIP compression bytes without changing extension source contents.
-
-### Optional validation
-
-For tests and Mozilla validation, install Node.js 22+ and run:
+Optional validation / 可选验证（Node.js 22+）：
 
 ```sh
 npm ci --ignore-scripts
 npm run check
 ```
 
-These development dependencies are not part of the extension. The `extension/` directory can also be loaded directly in Firefox using `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** → `extension/manifest.json`.
+The extension source is shipped directly; there is no compilation or bundling. ZIP compression bytes can vary between zlib versions.
+扩展直接使用源文件，不进行编译或合并。不同 zlib 版本可能改变 ZIP 压缩字节。
 
-Project: https://github.com/z11i/bilibili-cdn-primer
-Support: https://github.com/z11i/bilibili-cdn-primer/issues
-
-## 简体中文
-
-版本：**0.2.1**。
-
-本源代码包包含可直接审阅的扩展源文件、原创图标、测试、文档和可复现的打包脚本。没有代码压缩、转译、合并或远程代码加载。
-
-### 重建提交的扩展
-
-只需要 **Python 3**，不需要安装 npm 依赖。
-
-在此目录运行：
-
-```sh
-python3 scripts/package.py
-```
-
-输出：`dist/bilibili-cdn-primer-0.2.1.zip`。
-
-预期 SHA-256：
-
-```
-c8c6f4ea7be1b4f11c9a378e9a6bb5fbe5ed773a7c356f2fc3fe70e2198623a6
-```
-
-此文件与提交的 `bilibili-primer-0.2.1.zip` 逐字节一致，文件名不同，但软件包字节和其中的文件相同。打包脚本固定文件顺序、时间戳、权限和 ZIP 压缩方式。不同 zlib 实现可能改变压缩字节，但不改变扩展源文件内容。
-
-### 可选验证
-
-如需运行测试和 Mozilla 验证器，请安装 Node.js 22+，然后运行：
-
-```sh
-npm ci --ignore-scripts
-npm run check
-```
-
-这些开发依赖不包含在扩展中。也可在 Firefox 打开 `about:debugging#/runtime/this-firefox`，选择“临时载入附加组件”，直接加载 `extension/manifest.json`。
-
-项目：https://github.com/z11i/bilibili-cdn-primer
-反馈：https://github.com/z11i/bilibili-cdn-primer/issues
+See / 参阅：[measurement procedure / 测量流程](docs/measurement.md)。

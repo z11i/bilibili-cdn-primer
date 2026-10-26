@@ -259,5 +259,116 @@
   },
   "statusUnavailableIndex": {
     "message": "无法读取当前视频索引，请刷新页面"
+  },
+  "mode": {
+    "message": "工作模式"
+  },
+  "modeObserve": {
+    "message": "仅观察（无预热流量）"
+  },
+  "modePrime": {
+    "message": "受限预热"
+  },
+  "statusObserve": {
+    "message": "仅观察：记录播放与下载，不发送预热请求"
+  },
+  "statusPlayerBusy": {
+    "message": "播放器正在下载，等待空闲时段"
+  },
+  "labelStalls": {
+    "message": "播放卡顿"
+  },
+  "stallsValue": {
+    "message": "$1 次 · $2 秒（另记启动与跳转）"
+  },
+  "labelPlayerRequests": {
+    "message": "播放器请求"
+  },
+  "playerRequestsValue": {
+    "message": "$1 完成 · $2 失败/中止 · $3 与预热并发"
+  },
+  "modeAdaptive": {
+    "message": "自适应预热"
+  },
+  "adaptiveMaxPrimeMiB": {
+    "message": "自适应读取上限 · MiB"
+  },
+  "adaptiveDeadlineSeconds": {
+    "message": "自适应总超时 · 秒"
+  },
+  "adaptiveMaxLeadSeconds": {
+    "message": "自适应最大提前量 · 秒"
+  },
+  "labelAdaptive": {
+    "message": "自适应目标"
+  },
+  "adaptiveValue": {
+    "message": "$1 KiB · 超时 $2 秒 · 提前 $3 秒 · $4 个样本"
+  },
+  "labelDecision": {
+    "message": "调整依据"
+  },
+  "labelRecovery": {
+    "message": "恢复状态"
+  },
+  "recoveryYes": {
+    "message": "仅空闲时小范围探测"
+  },
+  "recoveryNo": {
+    "message": "正常调度"
+  },
+  "statusRecovery": {
+    "message": "恢复中：等待下一次小范围探测"
+  },
+  "adaptiveReason_initial": {
+    "message": "初始估计：等待可比较的播放器请求"
+  },
+  "adaptiveReason_no-body-start-earlier": {
+    "message": "多次探测未收到数据：增加提前量"
+  },
+  "adaptiveReason_slow-first-byte-start-earlier": {
+    "message": "多次首字节等待较长：增加提前量"
+  },
+  "adaptiveReason_slow-body-increase-bytes": {
+    "message": "播放器多次下载较慢：增加读取目标"
+  },
+  "adaptiveReason_fast-repeats-reduce-bytes": {
+    "message": "连续六次后续请求较快：减少额外流量"
+  },
+  "adaptiveConcurrency": {
+    "message": "允许受限并发探测（实验性）"
+  },
+  "adaptiveBusyWaitSeconds": {
+    "message": "并发探测前等待 · 秒"
+  },
+  "labelScheduler": {
+    "message": "调度状态"
+  },
+  "labelBlocked": {
+    "message": "播放器下载阻塞"
+  },
+  "blockedValue": {
+    "message": "$1 个请求 · 已等待 $2 秒 · 冷却 $3 秒"
+  },
+  "schedule_idle": {
+    "message": "本标签页播放器空闲"
+  },
+  "schedule_concurrency-disabled": {
+    "message": "等待空闲：并发探测未开启"
+  },
+  "schedule_waiting": {
+    "message": "等待达到受限并发探测条件"
+  },
+  "schedule_cooldown": {
+    "message": "并发探测冷却中"
+  },
+  "schedule_concurrent-ready": {
+    "message": "可尝试受限并发探测"
+  },
+  "schedule_index-too-large": {
+    "message": "索引超出并发探测上限，等待空闲"
+  },
+  "schedule_player-range-overlap": {
+    "message": "播放器正在下载此范围，跳过重复探测"
   }
 }

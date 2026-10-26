@@ -13,14 +13,14 @@ test('seek cancels old work; current media can be indexed independently of stale
     addEventListener: (e, f) => {handlers[e] = f;}, removeEventListener: () => {}};
   const info = {data: {dash: {video: [{id: 120, codecs: 'av01', baseUrl: url, SegmentBase: {indexRange: `0-${bin.length - 1}`}}]}}};
   const context = {
-    Primer: P, URL, Uint8Array, performance: {now: () => now}, Date: class extends Date {static now() {return now;}},
+    Primer: P, PrimerMeasure: require("../extension/measure.js"), URL, Uint8Array, performance: {now: () => now}, Date: class extends Date {static now() {return now;}},
     location: {href: 'https://www.bilibili.com/video/BVtest/?p=4', origin: 'https://www.bilibili.com', pathname: '/video/BVtest/'},
     window: {wrappedJSObject: {__playinfo__: info}, addEventListener() {}},
     document: {hidden: false, querySelectorAll: () => [video], addEventListener() {}},
     setInterval: f => {timer = f;},
     browser: {runtime: {onMessage: {addListener: f => {listener = f;}}, sendMessage: async msg => {
       sent.push(msg);
-      if (msg.type === 'init') return {config: P.settings()};
+      if (msg.type === 'init') return {config: P.settings({mode:"prime",enabled:true})};
       if (msg.type === 'fetch' && msg.kind === 'index') return {complete: true, headersApplied: true, data: [...bin]};
       if (msg.type === 'fetch') return new Promise(resolve => {finishPrime = resolve;});
       return {};

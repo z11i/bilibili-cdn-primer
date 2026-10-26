@@ -1,6 +1,9 @@
 "use strict";
 (() => {
   const statusKeys = {
+  "Recovery — waiting between small probes": "statusRecovery",
+  "Observation only — recording playback without priming": "statusObserve",
+  "Player downloading — waiting for idle time": "statusPlayerBusy",
   "Video index unavailable — refresh video": "statusUnavailableIndex",
   "Waiting for player media requests": "statusWaitingMedia",
   "Media stream changed": "statusChanged",

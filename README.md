@@ -30,11 +30,15 @@ Temporary installations last until Firefox restarts. A package must be signed by
 
 ## Use
 
-Enable priming from the popup. Open **Priming settings** to adjust the look-ahead window, timing, traffic limits, and language. The default request deadline is 2 seconds, with a 20-second lead and a 60-second video-timeline window. All tabs share a 32 MiB/minute traffic budget.
+Enable priming from the popup. Open **Priming settings** to adjust the look-ahead window, timing, traffic limits, and language. This development build starts in Observe only mode, recording player downloads and stall intervals without sending priming requests. Limited priming defaults to 0.35 seconds, approximately 256 KiB per request, and a shared 8 MiB/minute budget. Player downloads take priority. See the [measurement procedure](docs/measurement.md) before comparing modes.
+
+Optional **Adaptive priming** uses a byte target and a separate timeout, with bounded, session-only adjustments from later comparable player requests. Small idle-only recovery probes can run when buffer is low. See [adaptive mode](docs/adaptive.md) for limits and diagnostics.
 
 CDN filters control when priming runs; they do not redirect the player. If the player has already buffered beyond the target window, no additional segment needs priming. Diagnostics distinguish partial, completed, and failed requests rather than assuming a cache is warm.
 
 <p><img src="docs/images/popup-zh-CN.png" width="320" alt="Chinese popup in Firefox"></p>
+
+Select the mode from the dropdown; it is the single enable control. Version 0.4.2 adds per-tab scheduling and an opt-in bounded-concurrency setting for sustained blocking, with visible blockers and cooldown.
 
 ## Privacy
 

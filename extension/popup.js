@@ -35,8 +35,16 @@ async function update() {
     [t("labelWindow"), s.window ? `${clock(s.window.from)}–${clock(s.window.to)}` : "—"],
     [t("labelAttempts"), t("attemptsValue", [s.attempted, s.partial, s.completed])],
     [t("labelTraffic"), `${(s.bytes / 1048576).toFixed(2)} MiB`]] : [];
+  if (s?.playback) rows.push([t("labelStalls"), t("stallsValue", [s.playback.stalls, s.playback.stallSeconds.toFixed(1)])]);
+  if (s?.adaptive) rows.push([t("labelAdaptive"), t("adaptiveValue", [Math.round(s.adaptive.targetBytes/1024), s.adaptive.deadlineSeconds, s.adaptive.leadSeconds, s.adaptive.samples])], [t("labelDecision"), t("adaptiveReason_"+s.adaptive.reason)], [t("labelRecovery"), t(s.adaptive.recovery ? "recoveryYes" : "recoveryNo")]);
+  const stats = snapshot.playerStats?.[tabId];
+  if (stats) rows.push([t("labelPlayerRequests"), t("playerRequestsValue", [stats.completed, stats.failed, stats.overlapping])]);
+  const scheduling = snapshot.scheduler?.[tabId];
+  if (scheduling) rows.push([t("labelScheduler"), t("schedule_"+scheduling.reason)],
+    [t("labelBlocked"), t("blockedValue", [scheduling.blockerCount, (scheduling.waitMs/1000).toFixed(1), Math.ceil(scheduling.cooldownMs/1000)])]);
   rowsInto("details", rows);
-  rowsInto("detectionDetails", s?.detection ? [[t("labelDetection"), t("detectionValue", [s.detection.representations, s.detection.networkObservations, s.detection.performanceObservations])], [t("indexSource"), t(s.detection.indexSource === "playinfo" ? "indexPlayinfo" : "indexMedia")]] : []);
+  rowsInto("detectionDetails", s?.detection ? [[t("labelDetection"), t("detectionValue", [s.detection.representations, s.detection.networkObservations, s.detection.performanceObservations])], [t("indexSource"), t(s.detection.indexSource === "playinfo" ? "indexPlayinfo" : "indexMedia")],
+    ...(scheduling?.blockers || []).map(b=>[`${b.host} · ${b.id}`,`${(b.ageMs/1000).toFixed(1)} s · ${b.range ? `${b.range.lo}–${b.range.hi}` : "—"}`])] : []);
 }
 $("settings").addEventListener("submit", async e => {
   e.preventDefault(); const value = {...config};
@@ -49,13 +57,14 @@ $("settings").addEventListener("submit", async e => {
     await update(); $("feedback").textContent = t("saved");
   } catch (error) { $("feedback").textContent = PrimerI18n.notice(error.message, t); }
 });
-$("enabled").addEventListener("change", async () => {
-  try { config = (await send({type: "configure", value: {...config, enabled: $("enabled").checked}})).config; }
-  catch (error) { $("feedback").textContent = PrimerI18n.notice(error.message, t); }
+$("mode").addEventListener("change", async () => {
+  try { fill((await send({type:"configure", value:{...config,mode:$("mode").value,enabled:$("mode").value!=="observe"}})).config); await update(); }
+  catch(error) { $("feedback").textContent=PrimerI18n.notice(error.message,t); }
 });
 $("export").addEventListener("click", async () => {
   await update();
-  const blob = new Blob([JSON.stringify({version: browser.runtime.getManifest().version, exported: new Date().toISOString(), ...snapshot}, null, 2)], {type: "application/json"});
+  const full = await send({type:"export"});
+  const blob = new Blob([JSON.stringify({version: browser.runtime.getManifest().version, exported: new Date().toISOString(), ...full}, null, 2)], {type: "application/json"});
   const url = URL.createObjectURL(blob), a = document.createElement("a");
   a.href = url; a.download = `bilibili-primer-${Date.now()}.json`; a.click();
   setTimeout(() => URL.revokeObjectURL(url), 5000);

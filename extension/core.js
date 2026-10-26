@@ -1,14 +1,18 @@
 /* Shared, dependency-free parsing and scheduling. No page code is executed here. */
 (() => {
   "use strict";
-  const defaults = Object.freeze({enabled: true, leadSeconds: 20, windowSeconds: 60,
-    primeSeconds: 2, settleSeconds: 10, fetchMarginSeconds: 3, cadenceSeconds: 1,
-    gapSeconds: 0.5, maxPrimeMiB: 4, budgetMiB: 32, minBufferSeconds: 8,
+  const defaults = Object.freeze({enabled: false, mode: "observe", leadSeconds: 20, windowSeconds: 60,
+    primeSeconds: 0.35, settleSeconds: 10, fetchMarginSeconds: 3, cadenceSeconds: 1,
+    gapSeconds: 0.5, maxPrimeMiB: 0.25, budgetMiB: 8, minBufferSeconds: 8,
+    adaptiveMaxPrimeMiB: 1, adaptiveDeadlineSeconds: 8, adaptiveMaxLeadSeconds: 120,
+    adaptiveConcurrency: false, adaptiveBusyWaitSeconds: 10,
     primeWhilePaused: true, primeHidden: false, cdn: "follow", language: "auto"});
   const limits = {leadSeconds: [0, 300], windowSeconds: [5, 600], primeSeconds: [0.1, 10],
     settleSeconds: [0, 120], fetchMarginSeconds: [0, 30], cadenceSeconds: [0.5, 10],
-    gapSeconds: [0, 10], maxPrimeMiB: [0.1, 16], budgetMiB: [1, 256], minBufferSeconds: [0, 60]};
+    gapSeconds: [0, 10], maxPrimeMiB: [0.1, 16], budgetMiB: [1, 256], minBufferSeconds: [0, 60],
+    adaptiveMaxPrimeMiB: [0.0625, 4], adaptiveDeadlineSeconds: [1, 20], adaptiveMaxLeadSeconds: [20, 300], adaptiveBusyWaitSeconds:[5,60]};
   function settings(input = {}) {
+    if (!input || typeof input !== "object") input = {};
     const value = {...defaults};
     for (const [key, [lo, hi]] of Object.entries(limits)) {
       if (input[key] === undefined) continue;
@@ -16,12 +20,17 @@
       if (!Number.isFinite(n) || n < lo || n > hi) throw Error(`${key}: use ${lo}–${hi}`);
       value[key] = n;
     }
-    for (const key of ["enabled", "primeWhilePaused", "primeHidden"]) {
+    for (const key of ["enabled", "primeWhilePaused", "primeHidden", "adaptiveConcurrency"]) {
       if (typeof input[key] === "boolean") value[key] = input[key];
     }
     if (["follow", "gcore", "akamai"].includes(input.cdn)) value.cdn = input.cdn;
     if (["auto", "zh_CN", "en"].includes(input.language)) value.language = input.language;
+    if (["observe", "prime", "adaptive"].includes(input.mode)) value.mode = input.mode;
     return value;
+  }
+  function migrateSettings(input) {
+    if (input && input.mode === undefined) return settings({...input,enabled:false,mode:"observe",primeSeconds:0.35,maxPrimeMiB:0.25,budgetMiB:8});
+    return settings(input);
   }
   function mediaURL(value) {
     try {
@@ -107,7 +116,7 @@
     const to = time + lead + config.windowSeconds;
     return {from, to, segments: rows.filter(s => s.start >= from && s.end <= to)};
   }
-  const api = {defaults, limits, settings, mediaURL, videoURL, identity, deadline, freshURL, range, sidx, representations, plan};
+  const api = {defaults, limits, settings, migrateSettings, mediaURL, videoURL, identity, deadline, freshURL, range, sidx, representations, plan};
   globalThis.Primer = api;
   if (typeof module !== "undefined") module.exports = api;
 })();

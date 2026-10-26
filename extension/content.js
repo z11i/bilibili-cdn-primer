@@ -10,13 +10,25 @@
   const seenResources = new Set();
   let newestNetworkObservation = -Infinity;
   const INDEX_PROBE_BYTES = 65536;
+  const playback = new PrimerMeasure.PlaybackTracker();
+  let lastSampleMs = 0;
+  let adaptivePolicy = null;
   const history = new Map(); // Host+path+range; signed URL refresh does not reset attempts.
   const message = value => browser.runtime.sendMessage(value);
+  function capturePlayback(event) {
+    if (!video) return;
+    const state = {atMs: Date.now(), position: video.currentTime, bufferedEnd: bufferEnd(),
+      bufferSeconds: Math.max(0, bufferEnd() - video.currentTime), paused: video.paused,
+      seeking: Boolean(video.seeking), readyState: video.readyState, rate: video.playbackRate,
+      hidden: document.hidden, mode: config.mode, enabled: config.enabled,
+      media: selected ? P.identity(selected.url) : null};
+    for (const row of playback.add(event, state)) message({type: "playback", value: row}).catch(() => {});
+  }
   function log(value) { events.push({at: new Date().toISOString(), ...value}); if (events.length > 40) events.shift(); }
   function reset(reason, clearSelection = false) {
     generation++; seekUntil = Date.now() + 650;
     if (token) message({type: "cancel", token}).catch(() => {});
-    if (clearSelection) { selected = null; segments = []; blocked = ""; }
+    if (clearSelection) { selected = null; segments = []; blocked = ""; adaptivePolicy = null; }
     notice = reason;
   }
   function adopt(list, source = "playurl API") {
@@ -43,10 +55,16 @@
       const fresh = rep ? {...rep, url: P.freshURL(observed, rep.url)}
         : {url: observed, index: null, quality: null, codec: null, source: "media index probe"};
       if (selected && P.identity(selected.url) === P.identity(fresh.url)) {
+        if (selected.index && fresh.index && selected.index !== fresh.index) { reset("Media stream changed"); segments = []; }
         if (selected.url !== fresh.url || selected.index !== fresh.index) blocked = "";
         selected = fresh; return;
       }
-      reset("Media stream changed", true); selected = fresh; return;
+      // CDN failover does not change the byte layout of the same mirrored media
+      // resource. Preserve its parsed SIDX instead of spending every recovery
+      // opportunity on the same index. A different explicit index invalidates it.
+      const retained = selected && new URL(selected.url).pathname === new URL(fresh.url).pathname &&
+        (!selected.index || !fresh.index || selected.index === fresh.index) ? segments : [];
+      reset("Media stream changed", true); selected = fresh; segments = retained; return;
     }
   }
   function bufferEnd() {
@@ -61,16 +79,17 @@
     if (found === video) return;
     if (video) for (const [name, handler] of Object.entries(handlers)) video.removeEventListener(name, handler);
     video = found;
-    if (video) { reset("Player attached"); for (const [name, handler] of Object.entries(handlers)) video.addEventListener(name, handler); }
+    if (video) { capturePlayback("media-change"); reset("Player attached"); for (const [name, handler] of Object.entries(handlers)) video.addEventListener(name, handler); }
   }
   const handlers = {
-    seeking: () => reset("Seeking — rebuilding window"),
-    seeked: () => reset("Seek complete"),
-    ratechange: () => reset("Playback speed changed"),
-    pause: () => { if (!config.primeWhilePaused) reset("Paused"); },
-    waiting: () => { bufferUntil = Date.now() + 3000; reset("Yielding bandwidth to buffering player"); },
-    playing: () => { bufferUntil = 0; },
-    ended: () => reset("Video ended")
+    seeking: () => { capturePlayback("seeking"); reset("Seeking — rebuilding window"); },
+    seeked: () => { capturePlayback("seeked"); reset("Seek complete"); },
+    ratechange: () => { capturePlayback("ratechange"); reset("Playback speed changed"); },
+    pause: () => { capturePlayback("pause"); if (!config.primeWhilePaused) reset("Paused"); },
+    waiting: () => { capturePlayback("waiting"); bufferUntil = Date.now() + 3000; reset("Yielding bandwidth to buffering player"); },
+    stalled: () => capturePlayback("stalled"),
+    playing: () => { capturePlayback("playing"); bufferUntil = 0; },
+    ended: () => { capturePlayback("ended"); reset("Video ended"); }
   };
   function inspectGlobal() {
     try {
@@ -90,7 +109,7 @@
     if (source === "network") newestNetworkObservation = performance.now();
     detection[source === "performance" ? "performanceObservations" : "networkObservations"]++;
     recent = [value, ...recent.filter(v => P.identity(v) !== P.identity(value))].slice(0, 20);
-    if (selected && /-1-(?:100\d+|30[01]\d+)\.m4s$/.test(url.pathname) && !reps.some(v => P.identity(v.url) === P.identity(value))) reset("Waiting for new stream metadata", true);
+    if (selected && new URL(selected.url).pathname !== url.pathname && /-1-(?:100\d+|30[01]\d+)\.m4s$/.test(url.pathname) && !reps.some(v => P.identity(v.url) === P.identity(value))) reset("Waiting for new stream metadata", true);
     choose();
   }
   function inspectResources() {
@@ -113,29 +132,41 @@
       notice, pageLanguage: document.documentElement?.lang || "", enabled: config.enabled, host: selected ? new URL(selected.url).hostname : null,
       media: selected ? new URL(selected.url).pathname : null,
       quality: selected?.quality, codec: selected?.codec, current: video?.currentTime || 0,
-      bufferedEnd: bufferEnd(), window: video ? (() => { const p = P.plan(segments, video.currentTime, bufferEnd(), video.playbackRate, config); return {from: p.from, to: p.to, segments: p.segments.length}; })() : null,
-      pending, bytes: totalBytes, attempted, partial, completed, events,
+      bufferedEnd: bufferEnd(), window: video ? (() => {
+        if (config.mode === "adaptive" && adaptivePolicy?.recovery) {
+          const upcoming = segments.filter(s=>s.start>=bufferEnd()-0.15 && s.end>video.currentTime).slice(0,2);
+          return {from:upcoming[0]?.start??bufferEnd(),to:upcoming.at(-1)?.end??bufferEnd(),segments:upcoming.length};
+        }
+        const effective = config.mode === "adaptive" && adaptivePolicy ? {...config,leadSeconds:adaptivePolicy.leadSeconds,primeSeconds:0,settleSeconds:0,fetchMarginSeconds:0} : config;
+        const p = P.plan(segments, video.currentTime, bufferEnd(), video.playbackRate, effective);
+        return {from:p.from,to:Math.max(p.from,p.to),segments:p.segments.length};
+      })() : null,
+      pending, bytes: totalBytes, attempted, partial, completed, events, adaptive:config.mode === "adaptive" ? adaptivePolicy : null, playback: playback.summary(),
       detection: {...detection, recentMedia: recent.slice(0, 6).map(u => {
         const parsed = new URL(u); return {host: parsed.hostname, path: parsed.pathname};
       }), selectedSource: selected?.source || null, indexSource: selected?.index ? "playinfo" : "media index probe"}};
   }
-  async function request(kind, range, segment) {
+  async function request(kind, range, segment, durationSeconds, recovery = false) {
     token = `${Date.now()}-${Math.random()}`;
-    return message({type: "fetch", kind, range, segment, token, url: selected.url});
+    return message({type: "fetch", kind, range, segment, durationSeconds, recovery, token, url: selected.url});
   }
   async function tick() {
     if (location.href !== lastURL) {
+      capturePlayback("media-change");
       lastURL = location.href; recent = []; reps = []; reset("Page/part changed", true);
       newestNetworkObservation = -Infinity;
     }
     bindVideo(); inspectGlobal(); inspectResources();
+    if (video && Date.now() - lastSampleMs >= 2000) { lastSampleMs = Date.now(); capturePlayback("sample"); }
     if (pending || !video) return;
+    if (config.mode === "observe") { notice = "Observation only — recording playback without priming"; return; }
     if (!config.enabled) { notice = "Disabled"; return; }
     if (Date.now() < seekUntil || video.seeking) return;
     if (!config.primeHidden && document.hidden) { notice = "Waiting — tab hidden"; return; }
     if (video.ended) { notice = "Video ended"; return; }
     if (!config.primeWhilePaused && video.paused) { notice = "Waiting — paused"; return; }
-    if (Date.now() < bufferUntil || (!video.paused && (video.readyState < 3 || bufferEnd() - video.currentTime < config.minBufferSeconds))) {
+    const recovery = !video.paused && (video.readyState < 3 || bufferEnd() - video.currentTime < config.minBufferSeconds);
+    if (config.mode !== "adaptive" && (Date.now() < bufferUntil || recovery)) {
       notice = "Yielding bandwidth — player needs buffer"; return;
     }
     if (!selected) {
@@ -153,6 +184,10 @@
     const epoch = generation;
     pending = true;
     try {
+      if (config.mode === "adaptive") {
+        adaptivePolicy = await message({type:"policy",url:selected.url,recovery});
+        if (generation !== epoch) return;
+      }
       if (!segments.length) {
         const indexRange = selected.index || `0-${INDEX_PROBE_BYTES - 1}`;
         const r = P.range(indexRange);
@@ -160,6 +195,7 @@
         const result = await request("index", indexRange);
         totalBytes += result.bytes || 0;
         if (generation !== epoch) return;
+        if (result.playerBusy) { notice = "Player downloading — waiting for idle time"; return; }
         if (result.busy || result.budget) { notice = result.busy ? "Other tab is priming" : "Shared bandwidth budget reached"; return; }
         if (result.errorCode === "expired") { blocked = result.error; notice = blocked; log({error: blocked}); return; }
         if ([401, 403].includes(result.status)) blocked = "Access refused — refresh video for fresh playback URLs";
@@ -171,17 +207,26 @@
           throw e;
         }
       }
-      const plan = P.plan(segments, video.currentTime, bufferEnd(), video.playbackRate, config);
+      const effective = adaptivePolicy && config.mode === "adaptive" ? {...config,
+        leadSeconds:adaptivePolicy.leadSeconds,primeSeconds:0,settleSeconds:0,fetchMarginSeconds:0} : config;
+      const plan = recovery && config.mode === "adaptive"
+        ? {segments:segments.filter(s=>s.start >= bufferEnd()-0.15 && s.end>video.currentTime && s.start<=video.currentTime+config.windowSeconds)}
+        : P.plan(segments, video.currentTime, bufferEnd(), video.playbackRate, effective);
       const candidate = plan.segments.find(s => {
+        if(config.mode === "adaptive" && adaptivePolicy?.scheduler?.blockers.some(b=>
+          b.path===new URL(selected.url).pathname && b.range && b.range.lo<=s.hi && b.range.hi>=s.lo))return false;
         const old = history.get(`${P.identity(selected.url)}:${s.lo}-${s.hi}`);
         return !old || (old.outcome === "failed" && old.tries < 2 && Date.now() > old.retryAt);
       });
       if (!candidate) { notice = "Upcoming window attempted; watching playback"; return; }
       const key = `${P.identity(selected.url)}:${candidate.lo}-${candidate.hi}`;
       notice = `Priming ${Math.floor(candidate.start / 60)}:${String(Math.floor(candidate.start % 60)).padStart(2, "0")}`;
-      const result = await request("prime", `${candidate.lo}-${candidate.hi}`, candidate.id);
+      const result = await request("prime", `${candidate.lo}-${candidate.hi}`, candidate.id,
+        (candidate.end-candidate.start)/Math.max(0.1,video.playbackRate), recovery && config.mode === "adaptive");
       totalBytes += result.bytes || 0;
       if (generation !== epoch) { log({outcome: "cancelled after player change", bytes: result.bytes}); return; }
+      if (result.playerBusy) { notice = "Player downloading — waiting for idle time"; return; }
+      if (result.recoveryCooldown) { notice = "Recovery — waiting between small probes"; return; }
       if (result.busy || result.budget) { notice = result.busy ? "Other tab is priming" : "Shared bandwidth budget reached"; return; }
       if (result.errorCode === "expired") { blocked = result.error; notice = blocked; log({error: blocked}); return; }
       if (result.error && !result.outcome) throw Error(result.error);
@@ -208,8 +253,8 @@
     if (msg.type === "playinfo") adopt(msg.reps);
     if (msg.type === "observed") observed(msg.url, "network");
   });
-  document.addEventListener("visibilitychange", () => { if (document.hidden && !config.primeHidden) reset("Tab hidden"); });
-  window.addEventListener("pagehide", () => reset("Page closed"));
+  document.addEventListener("visibilitychange", () => { capturePlayback("visibility"); if (document.hidden && !config.primeHidden) reset("Tab hidden"); });
+  window.addEventListener("pagehide", () => { capturePlayback("pagehide"); reset("Page closed"); });
   message({type: "init"}).then(v => { config = P.settings(v.config); }).catch(() => {});
   setInterval(() => {
     if (performance.now() >= nextTick) { nextTick = performance.now() + config.cadenceSeconds * 1000; tick().catch(() => {}); }

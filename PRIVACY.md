@@ -10,7 +10,7 @@ The extension reads playback metadata, media requests, and playback position on 
 
 ## Local data
 
-Settings are stored locally in Firefox. Recent diagnostics are held in memory and contain media identifiers, byte ranges, timing, traffic, CDN addresses, and response headers. Video bodies are discarded. Diagnostic export is manual and saves a file to your device. Exports include participating tabs, but omit signed media query strings.
+Settings are stored locally in Firefox. Recent diagnostics are held in memory and contain media identifiers, byte ranges, timing, traffic, CDN addresses, response headers, playback position, buffer samples, and stall intervals. Video bodies are discarded. Diagnostic export is manual and saves a file to your device. Exports include participating tabs, but omit signed media query strings.
 
 ## Recipients and controls
 

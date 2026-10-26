@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extensionName__",
-  "version": "0.2.1",
+  "version": "0.4.2",
   "description": "__MSG_extensionDescription__",
   "browser_specific_settings": {
     "gecko": {
@@ -26,6 +26,8 @@
   "background": {
     "scripts": [
       "core.js",
+      "measure.js",
+      "adaptive.js",
       "background.js"
     ],
     "persistent": true
@@ -37,6 +39,7 @@
       ],
       "js": [
         "core.js",
+        "measure.js",
         "content.js"
       ],
       "run_at": "document_start",

@@ -31,7 +31,7 @@ test('moving window excludes player buffer and scales wall-clock lead at 2x', ()
   assert.equal(P.plan(rows, 100, 250, 1, cfg).segments.length, 0);
 });
 test('minimum lead covers prime, settle and delivery margins', () => {
-  assert.equal(P.plan([], 100, 100, 2, P.settings({leadSeconds: 0})).from, 130);
+  assert.equal(P.plan([], 100, 100, 2, P.settings({leadSeconds: 0,primeSeconds:2})).from, 130);
 });
 test('input restrictions reject arbitrary URLs, unsafe integers and invalid settings', () => {
   for (const url of ['https://example.com/upgcxcode/1/2/a.m4s', 'https://evilbilivideo.com/upgcxcode/1/2/a.m4s', 'http://upos-sz-mirrorcosov.bilivideo.com/upgcxcode/1/2/a.m4s', 'https://upos-sz-mirrorcosov.bilivideo.com:8888/upgcxcode/1/2/a.m4s']) assert.equal(P.mediaURL(url), null);

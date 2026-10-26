@@ -1,6 +1,6 @@
 {
   "name": "bilibili-cdn-primer",
-  "version": "0.2.1",
+  "version": "0.4.2",
   "private": true,
   "description": "Configurable upcoming-segment priming for Bilibili on Firefox.",
   "license": "MIT",
